@@ -18,6 +18,7 @@ export default async function PerfilPage() {
                         slug={project.slug} // <--- ¡Aquí enviamos el dato correcto!
                         description={project.description}
                         tag={project.tag}
+                        imageUrl={project.imageUrl} // <--- Nuevo prop
                     />
                 ))}
 
