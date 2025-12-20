@@ -1,11 +1,38 @@
 import { getProjectBySlug } from "@/data/projects";
-import { notFound } from "next/navigation"; // Importar manejo de 404
+import { notFound } from "next/navigation";
 import Link from "next/link";
+import { Metadata } from "next"; // <--- 1. Importar esto
 
 interface ProjectPageProps {
     params: Promise<{
         slug: string;
     }>;
+}
+
+// 2. FUNCIÓN PARA GENERAR METADATOS DINÁMICOS
+export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
+    // Esperamos los parámetros
+    const { slug } = await params;
+
+    // Buscamos el proyecto (igual que hacemos abajo)
+    const project = await getProjectBySlug(slug);
+
+    // Si no existe, no ponemos título (o ponemos uno de error)
+    if (!project) {
+        return {
+            title: "Proyecto no encontrado",
+        };
+    }
+
+    // Retornamos el título y la descripción específicos de ESTE proyecto
+    return {
+        title: project.title,
+        description: project.description,
+        // Incluso podemos poner la imagen para cuando se comparta en Twitter/WhatsApp
+        openGraph: {
+            images: [project.imageUrl],
+        },
+    };
 }
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
